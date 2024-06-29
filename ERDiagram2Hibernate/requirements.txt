@@ -1,0 +1,11 @@
+langchain
+langchain-core
+langchain-community
+sqlalchemy
+langchain_openai
+tavily-python
+sqlalchemy_schemadisplay
+langgraph
+psycopg2
+mistral
+langchain_mistralai
