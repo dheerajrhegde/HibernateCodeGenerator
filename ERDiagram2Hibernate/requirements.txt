@@ -9,3 +9,4 @@ langgraph
 psycopg2
 mistral
 langchain_mistralai
+langchain-groq

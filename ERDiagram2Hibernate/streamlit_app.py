@@ -1,5 +1,4 @@
 import sys
-
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated
 from langchain_core.messages import AnyMessage, SystemMessage, HumanMessage, ToolMessage
@@ -15,16 +14,21 @@ import re, sqlalchemy
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_core.runnables.config import RunnableConfig
 
+from langchain_groq import ChatGroq
+from llamaapi import LlamaAPI
+
 NEON_CONNECTION_STRING = os.getenv('NEON_CONNECTION_STRING')
 engine = sqlalchemy.create_engine(
     url=NEON_CONNECTION_STRING, pool_pre_ping=True, pool_recycle=300
 )
 model = ChatOpenAI(model='gpt-4o', openai_api_key=os.getenv("OPENAI_API_KEY"))
 
+
 # Data model
 class code(BaseModel):
     """Code output"""
     code: str = Field(description="Full code of a Hibernate entity including import statemens.")
+
 
 class xml(BaseModel):
     """XML output"""
@@ -33,8 +37,10 @@ class xml(BaseModel):
 
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
+
     def __init__(self):
         self.recursion_count = 0
+
 
 class Agent:
     def __init__(self, model, tools, system=""):
@@ -49,7 +55,7 @@ class Agent:
                 to_node="action",
                 condition=lambda state: state.recursion_count >= graph.config.get('recursion_limit', 5)
         )"""
-        #graph.config.get('recursion_limit', 100)
+        # graph.config.get('recursion_limit', 100)
         graph.set_entry_point("llm")
 
         self.graph = graph.compile()
@@ -80,6 +86,7 @@ class Agent:
         # print("Back to the model!")
         return {'messages': results}
 
+
 @tool
 def get_schema():
     """
@@ -109,9 +116,11 @@ def get_schema():
         schema += "\n"
     return schema
 
+
 class Entity(BaseModel):
     entity_definition: str = Field(..., description="Database table definition to create hibernate code")
     guidance: str = Field(..., description="Specific guidance to use while creating the hibernate Java code")
+
 
 @tool(args_schema=Entity)
 def create_hibernate_code(entity_definition: str, guidance: str):
@@ -126,10 +135,10 @@ def create_hibernate_code(entity_definition: str, guidance: str):
         Create hibernate code for the entity definition: {entity_definition}
         - Make sure to comment the code as per Java coding standards
         - Ensure the code is correctly formatted and follows the standard Hibernate conventions
-        
+
         Use below guidance as you create the code
         {guidance}
-    
+
     Your response should only be the Java code for the entity definition. Nothing else. 
     """
     print("creating hibernate code... for", entity_definition)
@@ -137,12 +146,14 @@ def create_hibernate_code(entity_definition: str, guidance: str):
     code_gen_chain = model.with_structured_output(code)
     response = code_gen_chain.invoke(entity_definition)
 
-    print(response)
+    print("Response from model is ...", response)
     return response
+
 
 class Config(BaseModel):
     database_url: str = Field(description="Database connection URL to use for hibernate.cfg.xml db properties")
     entity_list: list = Field(description="List of entity class names to add as mapping to hibernate.cfg.xml")
+
 
 @tool(args_schema=Config)
 def create_hibernate_config(database_url: str, entity_list: str):
@@ -155,11 +166,11 @@ def create_hibernate_config(database_url: str, entity_list: str):
 
     prompt = f"""
         You are a developer who is writing a configuration file for an Hibernate module/package.
-        
+
         Create a hibernate.cfg.xml with database connection properties coming from {database_url}.
         Do not add parameter to regenerate the database schema. Only read from the schema.
         For each class listed in {entity_list}, add a mapping XML element into the hibernate.cfg.xml.
-        
+
         You should have only the XML and nothing else in output
     """
     print("creating hibernate config... ")
@@ -168,20 +179,27 @@ def create_hibernate_config(database_url: str, entity_list: str):
     print(response)
     return response
 
+
 class CodeFile(BaseModel):
     file_name: str = Field(..., description="Name of the file")
     content: str = Field(..., description="Content of the file")
+
+
 @tool(args_schema=CodeFile)
 def save_file(file_name: str, content: str):
     """
     Save the generated code to a file
     """
+    print("saving java file to disk...", file_name)
     with open(file_name, "w") as f:
         f.write(content)
     return "File saved successfully"
 
+
 class Directory(BaseModel):
     directory_path: str = Field(..., description="Path of the directory to create")
+
+
 @tool(args_schema=Directory)
 def create_directory(directory_path: str):
     """
@@ -190,6 +208,7 @@ def create_directory(directory_path: str):
     os.makedirs(directory_path, exist_ok=True)
     return "Directory created successfully"
 
+
 @tool
 def get_db_connection_details():
     """
@@ -197,10 +216,14 @@ def get_db_connection_details():
     """
     return os.getenv('NEON_CONNECTION_STRING')
 
+
 import subprocess
+
+
 class MavenRun(BaseModel):
     command: str = Field(..., description="Maven command to run. Example 'clean install', 'compile', 'test")
     project_dir: str = Field(..., description="Path to the directory containing the Maven project")
+
 
 @tool(args_schema=MavenRun)
 def run_maven_command(command, project_dir):
@@ -239,10 +262,12 @@ def run_maven_command(command, project_dir):
         print(f"Errors: {e.stderr}")
         return e.returncode, e.output, e.stderr
 
+
 class CreateProject(BaseModel):
     base_dir: str = Field(..., description="Base directory for the project")
     project_name: str = Field(..., description="Name of the project")
     pom_content: str = Field(..., description="Content of the pom.xml file")
+
 
 @tool(args_schema=CreateProject)
 def create_maven_project(base_dir, project_name, pom_content):
@@ -273,6 +298,7 @@ def create_maven_project(base_dir, project_name, pom_content):
 
     print(f"Project {project_name} created successfully at {project_dir}")
 
+
 maven_project_prompt = """
     Create one maven project with Java 19, Hibernate 5.5.7, and JUnit 5. Project name is {project_name} and directory under which to create project is {project_root}
         - Create a maven pom.xml file for hibernate, junit, and other dependencies
@@ -281,9 +307,28 @@ maven_project_prompt = """
         - Move onto next steps once the maven project is created. 
 """
 
+project_root = "/Users/dheerajhegde/Documents/Code/Java"
+project_name = "HibernateProject"
+tools = [create_maven_project, ]
+maven_prompt_text = maven_project_prompt.format(project_root=project_root, project_name=project_name)
+abot = Agent(model, tools, system=maven_prompt_text)
+thread = {"configurable": {"thread_id": "1"}}
+response = abot.graph.invoke(input={"messages":
+                                        [HumanMessage(content=[
+                                            {"type": "text",
+                                             "text": maven_prompt_text}
+                                        ])],
+                                    "thread": thread})
+print(response)
+
+i = input("Okay to continue y/n")
+if i == 'N':
+    sys.exit()
+
+
 prompt = """
         You are an coding assistant with expertise in writing Java Code. 
-        
+
         Then, follow the instructions below:
         2. Understand the database schema provided to you as a text file
             - Identify Understand our each entity in the schema 
@@ -296,7 +341,7 @@ prompt = """
             - what relationships you need to define
             - what seter and getter methods you need to create
             - what hibernate mapping files you need to create and the mapping from class files to database tables
-        4. Generate the Hibernate code for each entity in the schema. Guidance foor you:
+        4. Generate the Hibernate code for each entity in the schema. Guidance for you:
             - Make sure you create Hibernate java code for every DB table. Retry in case code is 'None'
             - Use Java 19
             - Use Hibernate 5.5.7
@@ -311,6 +356,7 @@ prompt = """
             - include the necessary annotations for the Hibernate code
             - Ensure the relationships between entities are correctly defined
             - Ensure the code is correctly formatter (new line, indentation)  and follows the standard Hibernate conventions
+            - Composite-id class must implement java.io.Serializable interface
         5. Save each generated Hibernate code in a separate file in the {project_root}/{project_name}/src/main/java/com/github/dheerajhegde/hibernate folder
         6. Create a hibernate.cfg.xml file for each entity you have created in the previous step
             - Database connection should be in  hibernate.cfg.xml. Get connection details from the tools provided to you
@@ -322,38 +368,30 @@ prompt = """
             - Incase of package errors, go back and update the POM.xml file to include the necessary dependencies
         9. Generate the documentation for the Hibernate code
             - use generally accepted conventions for documenting Hibernate code
-        10. Create a Java that uses Hibernate Sessionfactory, Session, query to get Customer data from the database.
-            - This generated java file should be named App.java and should be in {project_root}/{project_name}/src/main/java folder
-            
+
         validation:
         1. Check if each Hibernate code you generate has setter and getter methods for each attribute of the entity
             - If not, go back and update the code to include the necessary setter and getter methods
         2. Confirm hibernate.cfg.xml is in src/main/resources folder and has all the necessary connection details and mappings
-            
+
         Your response should be 
         - the list names of the files you created 
         - Maven Build results
     """
-tools = [get_schema, create_hibernate_code, save_file, get_db_connection_details, run_maven_command, create_maven_project, create_hibernate_config]
-project_root = "/Users/dheerajhegde/Documents/Code/Java"
-project_name = "HibernateProject"
-tools = [create_maven_project]
-maven_prompt_text = maven_project_prompt.format(project_root=project_root, project_name=project_name)
-abot = Agent(model, tools, system=maven_prompt_text)
-thread = {"configurable": {"thread_id": "1"}}
-response = abot.graph.invoke(input={"messages": [HumanMessage(content=[{"type": "text", "text": "Create hibernate code for all tables in DB schema. You have been given the tools to get the entity definitionb, etc."}])], "thread": thread})
-print(response)
 
-i = input("Okay to continue y/n")
-if i == 'N':
-    sys.exit()
-
-tools = [get_schema, create_hibernate_code, save_file, get_db_connection_details, run_maven_command, create_hibernate_config]
+tools = [get_schema, create_hibernate_code, save_file, get_db_connection_details, run_maven_command,
+         create_hibernate_config]
 prompt_text = prompt.format(project_root=project_root, project_name=project_name)
 config = RunnableConfig(
-            recursion_limit=50,  # Set the recursion limit
-        )
+    recursion_limit=50,  # Set the recursion limit
+)
 abot = Agent(model, tools, system=prompt_text)
-thread = {"configurable": {"thread_id": "1"}}
-response = abot.graph.invoke(config=config, input={"messages": [HumanMessage(content=[{"type": "text", "text": "Create hibernate code for all tables in DB schema. You have been given the tools to get the entity definitionb, etc."}])], "thread": thread})
+response = abot.graph.invoke(
+    config=config,
+    input={
+        "messages":
+            [HumanMessage(content=[{"type": "text",
+                                    "text": "Create hibernate code for the schema"}]
+                          )],
+        "thread": thread})
 print(response)

@@ -5,7 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "customer_demographics")
 public class CustomerDemographics {
-
     @Id
     @Column(name = "customer_type_id")
     private String customerTypeId;
@@ -14,22 +13,24 @@ public class CustomerDemographics {
     private String customerDesc;
 
     @Column(name = "customertypeid")
-    private String customerTypeIdHibernate;
+    private String customertypeid;
 
     @Column(name = "customerdesc")
-    private String customerDescHibernate;
+    private String customerdesc;
 
-    public CustomerDemographics(){}
-    // Constructor
-    public CustomerDemographics(String customerTypeId, String customerDesc, String customerTypeIdHibernate, String customerDescHibernate) {
-        this.customerTypeId = customerTypeId;
-        this.customerDesc = customerDesc;
-        this.customerTypeIdHibernate = customerTypeIdHibernate;
-        this.customerDescHibernate = customerDescHibernate;
+    // Default constructor
+    public CustomerDemographics() {
     }
 
-    // Getters and Setters
+    // Parameterized constructor
+    public CustomerDemographics(String customerTypeId, String customerDesc, String customertypeid, String customerdesc) {
+        this.customerTypeId = customerTypeId;
+        this.customerDesc = customerDesc;
+        this.customertypeid = customertypeid;
+        this.customerdesc = customerdesc;
+    }
 
+    // Getters and setters
     public String getCustomerTypeId() {
         return customerTypeId;
     }
@@ -46,19 +47,19 @@ public class CustomerDemographics {
         this.customerDesc = customerDesc;
     }
 
-    public String getCustomerTypeIdHibernate() {
-        return customerTypeIdHibernate;
+    public String getCustomertypeid() {
+        return customertypeid;
     }
 
-    public void setCustomerTypeIdHibernate(String customerTypeIdHibernate) {
-        this.customerTypeIdHibernate = customerTypeIdHibernate;
+    public void setCustomertypeid(String customertypeid) {
+        this.customertypeid = customertypeid;
     }
 
-    public String getCustomerDescHibernate() {
-        return customerDescHibernate;
+    public String getCustomerdesc() {
+        return customerdesc;
     }
 
-    public void setCustomerDescHibernate(String customerDescHibernate) {
-        this.customerDescHibernate = customerDescHibernate;
+    public void setCustomerdesc(String customerdesc) {
+        this.customerdesc = customerdesc;
     }
 }

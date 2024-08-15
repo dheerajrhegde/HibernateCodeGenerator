@@ -1,27 +1,28 @@
 package com.github.dheerajhegde.hibernate;
 
 import javax.persistence.*;
-import java.util.*;
 
-@Entity 
-@Table(name = "categories") 
+@Entity
+@Table(name = "categories")
 public class Category {
-
-    @Id 
-    @Column(name = "category_id") 
+    @Id
+    @Column(name = "category_id")
     private short categoryId;
 
-    @Column(name = "category_name", nullable = false) 
+    @Column(name = "category_name", nullable = false)
     private String categoryName;
 
-    @Column(name = "description") 
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "picture") 
+    @Column(name = "picture")
     private byte[] picture;
 
-    public Category(){}
-    // Constructor
+    // Default constructor
+    public Category() {
+    }
+
+    // Parameterized constructor
     public Category(short categoryId, String categoryName, String description, byte[] picture) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
@@ -29,8 +30,7 @@ public class Category {
         this.picture = picture;
     }
 
-    // Getters and Setters
-
+    // Getters and setters
     public short getCategoryId() {
         return categoryId;
     }

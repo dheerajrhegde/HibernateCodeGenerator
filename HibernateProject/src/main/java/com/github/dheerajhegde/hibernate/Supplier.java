@@ -1,43 +1,65 @@
 package com.github.dheerajhegde.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "suppliers")
 public class Supplier {
-
     @Id
     @Column(name = "supplier_id")
-    private short supplierId;
-    @Column(name = "company_name")
+    private Short supplierId;
+
+    @Column(name = "company_name", nullable = false)
     private String companyName;
+
     @Column(name = "contact_name")
     private String contactName;
+
     @Column(name = "contact_title")
     private String contactTitle;
+
     @Column(name = "address")
     private String address;
+
     @Column(name = "city")
     private String city;
+
     @Column(name = "region")
     private String region;
-    @Column(name = "portal_code")
+
+    @Column(name = "postal_code")
     private String postalCode;
+
     @Column(name = "country")
     private String country;
+
     @Column(name = "phone")
     private String phone;
+
     @Column(name = "fax")
     private String fax;
+
     @Column(name = "homepage")
     private String homepage;
 
+    @Column(name = "companyname")
+    private String companyname;
 
-    // Constructor
-    public Supplier(short supplierId, String companyName, String contactName, String contactTitle, String address, String city, String region, String postalCode, String country, String phone, String fax, String homepage, String companyname, String contactname, String contacttitle, String postalcode) {
+    @Column(name = "contactname")
+    private String contactname;
+
+    @Column(name = "contacttitle")
+    private String contacttitle;
+
+    @Column(name = "postalcode")
+    private String postalcode;
+
+    // Default constructor
+    public Supplier() {
+    }
+
+    // Parameterized constructor
+    public Supplier(Short supplierId, String companyName, String contactName, String contactTitle, String address, String city, String region, String postalCode, String country, String phone, String fax, String homepage, String companyname, String contactname, String contacttitle, String postalcode) {
         this.supplierId = supplierId;
         this.companyName = companyName;
         this.contactName = contactName;
@@ -50,15 +72,18 @@ public class Supplier {
         this.phone = phone;
         this.fax = fax;
         this.homepage = homepage;
+        this.companyname = companyname;
+        this.contactname = contactname;
+        this.contacttitle = contacttitle;
+        this.postalcode = postalcode;
     }
 
-    // Getters and Setters
-
-    public short getSupplierId() {
+    // Getters and setters
+    public Short getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(short supplierId) {
+    public void setSupplierId(Short supplierId) {
         this.supplierId = supplierId;
     }
 
@@ -150,5 +175,35 @@ public class Supplier {
         this.homepage = homepage;
     }
 
+    public String getCompanyname() {
+        return companyname;
+    }
 
+    public void setCompanyname(String companyname) {
+        this.companyname = companyname;
+    }
+
+    public String getContactname() {
+        return contactname;
+    }
+
+    public void setContactname(String contactname) {
+        this.contactname = contactname;
+    }
+
+    public String getContacttitle() {
+        return contacttitle;
+    }
+
+    public void setContacttitle(String contacttitle) {
+        this.contacttitle = contacttitle;
+    }
+
+    public String getPostalcode() {
+        return postalcode;
+    }
+
+    public void setPostalcode(String postalcode) {
+        this.postalcode = postalcode;
+    }
 }

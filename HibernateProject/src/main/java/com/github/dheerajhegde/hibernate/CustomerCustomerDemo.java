@@ -1,16 +1,11 @@
 package com.github.dheerajhegde.hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "customer_customer_demo")
 public class CustomerCustomerDemo implements Serializable {
-
     @Id
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -21,14 +16,17 @@ public class CustomerCustomerDemo implements Serializable {
     @JoinColumn(name = "customer_type_id")
     private CustomerDemographics customerDemographics;
 
-    // Constructor
+    // Default constructor
+    public CustomerCustomerDemo() {
+    }
+
+    // Parameterized constructor
     public CustomerCustomerDemo(Customer customer, CustomerDemographics customerDemographics) {
         this.customer = customer;
         this.customerDemographics = customerDemographics;
     }
 
-    // Getters and Setters
-
+    // Getters and setters
     public Customer getCustomer() {
         return customer;
     }
@@ -45,5 +43,3 @@ public class CustomerCustomerDemo implements Serializable {
         this.customerDemographics = customerDemographics;
     }
 }
-
-// Assume Customer and CustomerDemographics are Hibernate entities representing the customers and customer_demographics tables.

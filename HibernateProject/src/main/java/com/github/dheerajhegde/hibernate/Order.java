@@ -6,7 +6,6 @@ import java.util.Date;
 @Entity
 @Table(name = "orders")
 public class Order {
-
     @Id
     @Column(name = "order_id")
     private Short orderId;
@@ -50,9 +49,24 @@ public class Order {
     @Column(name = "ship_country")
     private String shipCountry;
 
-    public Order(){}
-    // Constructor
-    public Order(Short orderId, String customerId, Short employeeId, Date orderDate, Date requiredDate, Date shippedDate, Short shipVia, Float freight, String shipName, String shipAddress, String shipCity, String shipRegion, String shipPostalCode, String shipCountry) {
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false, insertable = false, updatable = false)
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id", insertable = false, updatable = false)
+    private Employee employee;
+
+    @ManyToOne
+    @JoinColumn(name = "ship_via", insertable = false, updatable = false)
+    private Shipper shipper;
+
+    // Default constructor
+    public Order() {
+    }
+
+    // Parameterized constructor
+    public Order(Short orderId, String customerId, Short employeeId, Date orderDate, Date requiredDate, Date shippedDate, Short shipVia, Float freight, String shipName, String shipAddress, String shipCity, String shipRegion, String shipPostalCode, String shipCountry, Customer customer, Employee employee, Shipper shipper) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.employeeId = employeeId;
@@ -67,10 +81,12 @@ public class Order {
         this.shipRegion = shipRegion;
         this.shipPostalCode = shipPostalCode;
         this.shipCountry = shipCountry;
+        this.customer = customer;
+        this.employee = employee;
+        this.shipper = shipper;
     }
 
-    // Getters and Setters
-
+    // Getters and setters
     public Short getOrderId() {
         return orderId;
     }
@@ -181,5 +197,29 @@ public class Order {
 
     public void setShipCountry(String shipCountry) {
         this.shipCountry = shipCountry;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Shipper getShipper() {
+        return shipper;
+    }
+
+    public void setShipper(Shipper shipper) {
+        this.shipper = shipper;
     }
 }

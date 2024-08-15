@@ -1,17 +1,13 @@
 package com.github.dheerajhegde.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "us_states")
-public class USState {
-
+public class UsState {
     @Id
     @Column(name = "state_id")
-    private Short stateId;
+    private short stateId;
 
     @Column(name = "state_name")
     private String stateName;
@@ -22,22 +18,36 @@ public class USState {
     @Column(name = "state_region")
     private String stateRegion;
 
-    public USState(){}
-    // Constructor
-    public USState(Short stateId, String stateName, String stateAbbr, String stateRegion) {
+    @Column(name = "stateabbr")
+    private String stateabbr;
+
+    @Column(name = "statename")
+    private String statename;
+
+    @Column(name = "stateregion")
+    private String stateregion;
+
+    // Default constructor
+    public UsState() {
+    }
+
+    // Parameterized constructor
+    public UsState(short stateId, String stateName, String stateAbbr, String stateRegion, String stateabbr, String statename, String stateregion) {
         this.stateId = stateId;
         this.stateName = stateName;
         this.stateAbbr = stateAbbr;
         this.stateRegion = stateRegion;
+        this.stateabbr = stateabbr;
+        this.statename = statename;
+        this.stateregion = stateregion;
     }
 
-    // Getters and Setters
-
-    public Short getStateId() {
+    // Getters and setters
+    public short getStateId() {
         return stateId;
     }
 
-    public void setStateId(Short stateId) {
+    public void setStateId(short stateId) {
         this.stateId = stateId;
     }
 
@@ -63,5 +73,29 @@ public class USState {
 
     public void setStateRegion(String stateRegion) {
         this.stateRegion = stateRegion;
+    }
+
+    public String getStateabbr() {
+        return stateabbr;
+    }
+
+    public void setStateabbr(String stateabbr) {
+        this.stateabbr = stateabbr;
+    }
+
+    public String getStatename() {
+        return statename;
+    }
+
+    public void setStatename(String statename) {
+        this.statename = statename;
+    }
+
+    public String getStateregion() {
+        return stateregion;
+    }
+
+    public void setStateregion(String stateregion) {
+        this.stateregion = stateregion;
     }
 }

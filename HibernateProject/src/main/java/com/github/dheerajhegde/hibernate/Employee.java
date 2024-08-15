@@ -2,19 +2,19 @@ package com.github.dheerajhegde.hibernate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.sql.Blob;
 
 @Entity
 @Table(name = "employees")
 public class Employee {
-
     @Id
     @Column(name = "employee_id")
-    private int employeeId;
+    private short employeeId;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "title")
@@ -23,9 +23,11 @@ public class Employee {
     @Column(name = "title_of_courtesy")
     private String titleOfCourtesy;
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
     private Date birthDate;
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "hire_date")
     private Date hireDate;
 
@@ -51,23 +53,23 @@ public class Employee {
     private String extension;
 
     @Column(name = "photo")
-    private byte[] photo;
+    private Blob photo;
 
     @Column(name = "notes")
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reports_to")
-    private Employee manager;
+    @Column(name = "reports_to")
+    private Short reportsTo;
 
     @Column(name = "photo_path")
     private String photoPath;
 
-    public Employee(){
-
+    // Default constructor
+    public Employee() {
     }
-    // Constructor
-    public Employee(int employeeId, String lastName, String firstName, String title, String titleOfCourtesy, Date birthDate, Date hireDate, String address, String city, String region, String postalCode, String country, String homePhone, String extension, byte[] photo, String notes, Employee manager, String photoPath) {
+
+    // Parameterized constructor
+    public Employee(short employeeId, String lastName, String firstName, String title, String titleOfCourtesy, Date birthDate, Date hireDate, String address, String city, String region, String postalCode, String country, String homePhone, String extension, Blob photo, String notes, Short reportsTo, String photoPath) {
         this.employeeId = employeeId;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -84,17 +86,16 @@ public class Employee {
         this.extension = extension;
         this.photo = photo;
         this.notes = notes;
-        this.manager = manager;
+        this.reportsTo = reportsTo;
         this.photoPath = photoPath;
     }
 
-    // Getters and Setters
-
-    public int getEmployeeId() {
+    // Getters and setters
+    public short getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(int employeeId) {
+    public void setEmployeeId(short employeeId) {
         this.employeeId = employeeId;
     }
 
@@ -202,11 +203,11 @@ public class Employee {
         this.extension = extension;
     }
 
-    public byte[] getPhoto() {
+    public Blob getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(Blob photo) {
         this.photo = photo;
     }
 
@@ -218,12 +219,12 @@ public class Employee {
         this.notes = notes;
     }
 
-    public Employee getManager() {
-        return manager;
+    public Short getReportsTo() {
+        return reportsTo;
     }
 
-    public void setManager(Employee manager) {
-        this.manager = manager;
+    public void setReportsTo(Short reportsTo) {
+        this.reportsTo = reportsTo;
     }
 
     public String getPhotoPath() {

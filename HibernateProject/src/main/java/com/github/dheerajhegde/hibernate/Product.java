@@ -1,56 +1,52 @@
 package com.github.dheerajhegde.hibernate;
 
-import javax.persistence.Column; 
-import javax.persistence.Entity; 
-import javax.persistence.GeneratedValue; 
-import javax.persistence.Id; 
-import javax.persistence.JoinColumn; 
-import javax.persistence.ManyToOne; 
-import javax.persistence.Table;
+import javax.persistence.*;
 
-@Entity 
-@Table(name = "products") 
+@Entity
+@Table(name = "products")
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
+    private Short id;
 
-    @Id 
-    @GeneratedValue 
-    @Column(name = "product_id") 
-    private Short productId;
+    @Column(name = "product_name", nullable = false)
+    private String name;
 
-    @Column(name = "product_name", nullable = false) 
-    private String productName;
-
-    @ManyToOne 
-    @JoinColumn(name = "supplier_id") 
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
-    @ManyToOne 
-    @JoinColumn(name = "category_id") 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "quantity_per_unit") 
+    @Column(name = "quantity_per_unit")
     private String quantityPerUnit;
 
-    @Column(name = "unit_price") 
+    @Column(name = "unit_price")
     private Float unitPrice;
 
-    @Column(name = "units_in_stock") 
+    @Column(name = "units_in_stock")
     private Short unitsInStock;
 
-    @Column(name = "units_on_order") 
+    @Column(name = "units_on_order")
     private Short unitsOnOrder;
 
-    @Column(name = "reorder_level") 
+    @Column(name = "reorder_level")
     private Short reorderLevel;
 
-    @Column(name = "discontinued", nullable = false) 
-    private Boolean discontinued;
+    @Column(name = "discontinued", nullable = false)
+    private boolean discontinued;
 
-    public Product(){}
-    // Constructor
-    public Product(Short productId, String productName, Supplier supplier, Category category, String quantityPerUnit, Float unitPrice, Short unitsInStock, Short unitsOnOrder, Short reorderLevel, Boolean discontinued) {
-        this.productId = productId;
-        this.productName = productName;
+    // Default constructor
+    public Product() {
+    }
+
+    // Parameterized constructor
+    public Product(Short id, String name, Supplier supplier, Category category, String quantityPerUnit, Float unitPrice, Short unitsInStock, Short unitsOnOrder, Short reorderLevel, boolean discontinued) {
+        this.id = id;
+        this.name = name;
         this.supplier = supplier;
         this.category = category;
         this.quantityPerUnit = quantityPerUnit;
@@ -61,22 +57,21 @@ public class Product {
         this.discontinued = discontinued;
     }
 
-    // Getters and Setters
-
-    public Short getProductId() {
-        return productId;
+    // Getters and setters
+    public Short getId() {
+        return id;
     }
 
-    public void setProductId(Short productId) {
-        this.productId = productId;
+    public void setId(Short id) {
+        this.id = id;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return name;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Supplier getSupplier() {
@@ -135,11 +130,11 @@ public class Product {
         this.reorderLevel = reorderLevel;
     }
 
-    public Boolean getDiscontinued() {
+    public boolean isDiscontinued() {
         return discontinued;
     }
 
-    public void setDiscontinued(Boolean discontinued) {
+    public void setDiscontinued(boolean discontinued) {
         this.discontinued = discontinued;
     }
 }

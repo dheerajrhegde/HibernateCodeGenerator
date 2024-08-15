@@ -1,39 +1,38 @@
 package com.github.dheerajhegde.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "shippers")
 public class Shipper {
-
     @Id
-    @Column(name = "shipper_id")
-    private short shipperId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shipper_id", nullable = false)
+    private Short shipperId;
 
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false, length = 40)
     private String companyName;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 24)
     private String phone;
 
-    public Shipper(){}
-    // Constructor
-    public Shipper(short shipperId, String companyName, String phone) {
+    // Default constructor
+    public Shipper() {
+    }
+
+    // Parameterized constructor
+    public Shipper(Short shipperId, String companyName, String phone) {
         this.shipperId = shipperId;
         this.companyName = companyName;
         this.phone = phone;
     }
 
-    // Getters and Setters
-
-    public short getShipperId() {
+    // Getters and setters
+    public Short getShipperId() {
         return shipperId;
     }
 
-    public void setShipperId(short shipperId) {
+    public void setShipperId(Short shipperId) {
         this.shipperId = shipperId;
     }
 
